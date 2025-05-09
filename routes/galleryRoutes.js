@@ -5,23 +5,16 @@ const path = require('path');
 const Gallery = require('../models/Gallery');
 const router = express.Router();
 
-// Setup multer for image upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage: storage });
+// Use the S3-based upload middleware
+const upload = require('../middleware/upload');
 
 // POST route for uploading an image
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { category, email } = req.body;
+    // req.file.location contains the S3 URL
     const newImage = new Gallery({
-      url: `/uploads/${req.file.filename}`,
+      url: req.file.location,
       category,
       email,
     });
