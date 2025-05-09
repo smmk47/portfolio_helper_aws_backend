@@ -8,7 +8,7 @@ dotenv.config();
 
 exports.signup = async (req, res) => {
     const { name, email, password, dob, phone } = req.body;
-    const profilePic = req.file ? req.file.path : null;
+    const profilePic = req.file ? req.file.location : null; // S3 URL
 
     try {
         let user = await User.findOne({ email });
